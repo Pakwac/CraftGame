@@ -13,8 +13,6 @@ public class DiamondManager : MonoBehaviour
 			other.gameObject.GetComponent<PlayerController>().score++;
 			GameObject obj = Instantiate(paricleBurst, gameObject.transform.position, Quaternion.identity);
 			gameObject.SetActive(false);
-
-
 			Destroy(obj, 2f);
 		}
 	}
