@@ -14,6 +14,7 @@ public class DiamondManager : MonoBehaviour
 			GameObject obj = Instantiate(paricleBurst, gameObject.transform.position, Quaternion.identity);
 			gameObject.SetActive(false);
 			Destroy(obj, 2f);
+			Debug.Log(gameObject.name);
 		}
 	}
 }
