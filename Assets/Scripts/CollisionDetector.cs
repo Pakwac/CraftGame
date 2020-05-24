@@ -6,14 +6,13 @@ public class CollisionDetector : MonoBehaviour
 {
 	private GameObject spawnManager;
 
-	private Animator animatior;
+	private Animator anim;
 
 	private void Awake()
 	{
 		spawnManager = GameObject.Find("TileSpawnManager");
-		animatior = GetComponent<Animator>();
-		animatior.SetFloat("Animation Speed", 1f);
-		animatior.Play("FadeIn");
+		anim = GetComponent<Animator>();
+		anim.Play("FadeIn");
 	}
 
 	private void OnCollisionEnter(Collision player)
@@ -28,8 +27,8 @@ public class CollisionDetector : MonoBehaviour
 	{
 		if (player.gameObject.name == "Player")
 		{
-			animatior.Play("FadeOut");
-			Destroy(transform.parent.gameObject, animatior.GetCurrentAnimatorStateInfo(0).length);
+			anim.Play("FadeOut");
+			Destroy(transform.parent.gameObject, anim.GetCurrentAnimatorStateInfo(0).length);
 		}
 	}
 }
