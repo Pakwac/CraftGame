@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-	public GameObject player;
+	public PlayerController player;
 
 	private Vector3 offset;
 
@@ -19,7 +19,7 @@ public class CameraController : MonoBehaviour
 	{
 		if (player != null)
 		{
-			isAlive = player.GetComponent<PlayerController>().isAlive;
+			isAlive = player.isAlive;
 			if (isAlive)
 			{
 				transform.position = player.transform.position + offset;

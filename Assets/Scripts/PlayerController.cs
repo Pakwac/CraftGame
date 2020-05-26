@@ -5,10 +5,6 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-	public int score;
-
-	public Text scoreText;
-
 	[SerializeField]
 	private float speed = 5f;
 
@@ -23,38 +19,29 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void Update()
-	{
-		Ray ray = new Ray(transform.position, Vector3.down);
-		if (!Physics.Raycast(ray, 1f))
-		{
-			isAlive = false;
-		}
-		else
-		{
-			isAlive = true;
-		}
-		if (isAlive)
-		{
-			if (Input.GetMouseButtonDown(0))
-			{
-				if (moveVector == Vector3.forward)
-				{
-					moveVector = Vector3.left;
-				}
-				else
-				{
-					moveVector = Vector3.forward;
-				}
-			}
-		}
-		else
-		{
-			Destroy(gameObject, 2f);
-		}
-		scoreText.text = score.ToString();
-	}
+    {
+        isAlive = UpdateIsAlive();
+        if (isAlive)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                moveVector = moveVector == Vector3.forward ? Vector3.left : Vector3.forward;
+            }
+        }
+        else
+        {
+            Destroy(gameObject, 2f);
+        }
+    }
 
-	private void FixedUpdate()
+    private bool UpdateIsAlive()
+    {
+        Ray ray = new Ray(transform.position, Vector3.down);
+        return Physics.Raycast(ray, 1f);
+       
+    }
+
+    private void FixedUpdate()
 	{
 		transform.Translate(moveVector * speed * Time.fixedDeltaTime);
 	}

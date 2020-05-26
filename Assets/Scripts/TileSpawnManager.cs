@@ -1,41 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public class TileSpawnManager : MonoBehaviour
+public enum SpawnPoint
 {
-	public GameObject tile;
+    leftPos,
+    straightPos
+} 
 
-	public GameObject currentTile;
+public class TileSpawnManager : MonoBehaviour, ITileSpawnManager
+{
+    public GameObject tile;
+    public Tile currentTile;
+    public DiContainer container;
+    
+    private void Start()
+    {
+        StartCoroutine("SpawnCoroutine");
+    }
 
-	private void Start()
-	{
-		StartCoroutine("SpawnCoroutine");
-	}
+    [Inject]
+    void Init(DiContainer container)
+    {
+        this.container = container;
+    }
 
-	private IEnumerator SpawnCoroutine()
-	{
-		for (int i = 0; i < 10; i++)
-		{
-			SpawnTile();
-			yield return new WaitForSeconds(0.5f);
-		}
-	}
+    private IEnumerator SpawnCoroutine()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            SpawnTile();
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
 
-	private void Update()
-	{
-	}
+    public void SpawnTile()
+    {
+        currentTile = container.InstantiatePrefab(tile, SelectPosition(currentTile), Quaternion.identity, null).GetComponent<Tile>();
+        var isDiamondActive = Random.Range(0, 5) == 0;
+        if (currentTile.Diamond != null)currentTile.Diamond.SetActive(isDiamondActive);
+    }
 
-	public void SpawnTile()
-	{
-		currentTile = Instantiate(tile, currentTile.transform.GetChild(0).transform.GetChild(Random.Range(0, 2)).position, Quaternion.identity);
-		if (Random.Range(0, 5) == 0)
-		{
-			currentTile.transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(true);
-		}
-		else
-		{
-			currentTile.transform.GetChild(1).transform.GetChild(0).gameObject.SetActive(false);
-		}
-	}
+   
+    public Vector3 SelectPosition(Tile currentTile)
+    {
+        var point = (SpawnPoint)Random.Range(0, 2);
+        switch (point)
+        {
+            case SpawnPoint.leftPos:
+                return currentTile.LeftPos.position;
+                
+            case SpawnPoint.straightPos:
+                return currentTile.StraightPos.position;
+        }
+        
+        return currentTile.LeftPos.position;
+    }
 }
