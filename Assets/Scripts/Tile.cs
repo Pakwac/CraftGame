@@ -8,7 +8,5 @@ public class Tile : MonoBehaviour
     public Transform StraightPos;
     public GameObject Diamond;
     public Vector3 currentPos;
-
-   
 }
 
