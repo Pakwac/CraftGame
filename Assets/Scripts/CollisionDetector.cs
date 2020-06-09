@@ -1,25 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
+
 
 public class CollisionDetector : MonoBehaviour
 {
-	private ITileSpawnManager spawnManager;
+	public TileSpawnManager spawnManager;
 
 	private Animator anim;
 
 	private void Awake()
 	{
+		spawnManager = FindObjectOfType<TileSpawnManager>();
 		anim = GetComponent<Animator>();
+		
+	}
+
+	private void OnEnable()
+	{
 		anim.Play("FadeIn");
 	}
 
-    [Inject]
-    void Init(ITileSpawnManager spawnManager)
-    {
-		this.spawnManager = spawnManager;
-    }
 
 	private void OnCollisionEnter(Collision player)
 	{		
@@ -29,7 +30,14 @@ public class CollisionDetector : MonoBehaviour
 	private void OnCollisionExit(Collision player)
 	{
 		anim.Play("FadeOut");
-		Destroy(transform.parent.gameObject, anim.GetCurrentAnimatorStateInfo(0).length);	
+		//Destroy(transform.parent.gameObject, anim.GetCurrentAnimatorStateInfo(0).length);	
+		StartCoroutine("Off");
+	}
+
+	private IEnumerator Off()
+	{
+		yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+		gameObject.GetComponentInParent<Tile>().gameObject.SetActive(false);
 	}
 }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
+
 
 public class Diamond : MonoBehaviour
 {
@@ -12,10 +12,7 @@ public class Diamond : MonoBehaviour
     {
         gameBehavior = FindObjectOfType<GameBehavior>();
     }
-    void Init(GameBehavior gameBehavior)
-    {
-        this.gameBehavior = gameBehavior;
-    }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "Player")

@@ -12,20 +12,28 @@ public enum SpawnPoint
 public class TileSpawnManager : MonoBehaviour, ITileSpawnManager
 {
     public GameObject tile;
-    public Tile currentTile;
+    public GameObject currentTile;
     public DiContainer container;
+
+    public List<GameObject> tiles = new List<GameObject>();
     
     private void Start()
     {
+        StartCoroutine("CreatePool");
         StartCoroutine("SpawnCoroutine");
+       
     }
 
-    [Inject]
-    void Init(DiContainer container)
+    private IEnumerator CreatePool()
     {
-        this.container = container;
+        for (int i = 0; i < 20; i++)
+        {
+            var go = Instantiate(tile, transform.position, Quaternion.identity);
+            go.SetActive(false);
+            tiles.Add(go);
+        }
+        yield return null;
     }
-
     private IEnumerator SpawnCoroutine()
     {
         for (int i = 0; i < 10; i++)
@@ -35,26 +43,59 @@ public class TileSpawnManager : MonoBehaviour, ITileSpawnManager
         }
     }
 
-    public void SpawnTile()
+    //public void CreateTile()
+    //{
+
+       
+    //    tile.SetActive(false);
+    //    currentTile = tile;
+    //    tiles.Add(tile);
+      
+
+    //    
+    //    
+    //}
+
+    public GameObject GetPoolTile()
     {
-        currentTile = container.InstantiatePrefab(tile, SelectPosition(currentTile), Quaternion.identity, null).GetComponent<Tile>();
-        var isDiamondActive = Random.Range(0, 5) == 0;
-        if (currentTile.Diamond != null)currentTile.Diamond.SetActive(isDiamondActive);
+        for (int i = 0; i < tiles.Count; i++)
+        {
+            if (!tiles[i].activeSelf)
+            {
+                return tiles[i];
+            }
+        }
+        
+        return null;
     }
 
+    public void SpawnTile()
+    {
+        var go = GetPoolTile();
+        go.transform.position = SelectPosition(currentTile);
+        go.SetActive(true);
+        currentTile = go;
+
+        var isDiamondActive = Random.Range(0, 5) == 0;
+        if (go.GetComponent<Tile>().Diamond != null) currentTile.GetComponent<Tile>().Diamond.SetActive(isDiamondActive);
+    }
+
+    
+
+
    
-    public Vector3 SelectPosition(Tile currentTile)
+    public Vector3 SelectPosition(GameObject currentTile)
     {
         var point = (SpawnPoint)Random.Range(0, 2);
         switch (point)
         {
             case SpawnPoint.leftPos:
-                return currentTile.LeftPos.position;
+                return currentTile.GetComponent<Tile>().LeftPos.position;
                 
             case SpawnPoint.straightPos:
-                return currentTile.StraightPos.position;
+                return currentTile.GetComponent<Tile>().StraightPos.position;
         }
         
-        return currentTile.LeftPos.position;
+        return currentTile.GetComponent<Tile>().LeftPos.position;
     }
 }
